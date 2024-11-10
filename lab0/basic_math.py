@@ -33,28 +33,46 @@ def functions(a_1, a_2):
     Необходимо найти точки экстремума функции и определить, есть ли у функций общие решения.
     Вернуть нужно координаты найденных решения списком, если они есть. None, если их бесконечно много.
     """
-    coeff1 = list(map(float, a_1.split()))
-    coeff2 = list(map(float, a_2.split()))
-    
-    if coeff1 == coeff2:
-        return None  
-    
+    result = []
+    a_1 = np.array(list(map(float, str(a_1).split())))
+    a_2 = np.array(list(map(float, str(a_2).split())))
 
-    def find_extremum(coeff):
-        a, b, c = coeff
-        if a == 0:
-            return None  
-        x_ext = -b / (2 * a)
-        y_ext = a * x_ext**2 + b * x_ext + c
-        return (round(x_ext), round(y_ext))  
-    
-    extremum1 = find_extremum(coeff1)
-    extremum2 = find_extremum(coeff2)
-    
-    if extremum1 and extremum2 and extremum1 == extremum2:
-        return [extremum1]  
-    else:
+    coeffs_diff = a_1 - a_2
+
+    first, second, third = coeffs_diff[0], coeffs_diff[1], coeffs_diff[2]
+
+    temp = None
+
+    def f(root, coeffs):
+        val = np.polyval(coeffs, root)
+        return val
+
+    if np.isclose(first, 0):
+        if np.isclose(second, 0):
+            if np.isclose(third, 0):
+                return temp
+            else:
+                empty_result = []
+                return empty_result
+        x = -third / second
+        result.append((x, f(x, coeffs_diff)))
+        return result
+
+    deter = second ** 2 - 4 * first * third
+    if det < 0:
         return []
+
+    sqrt_det = np.sqrt(deter)
+    x1 = (-second + sqrt_det) / (2 * first)
+    x2 = (-second - sqrt_det) / (2 * first)
+
+    if np.isclose(x1, x2):
+        single_root = [(x1, f(x1, a_1))]
+        return single_root
+    else:
+        result.append((x1, f(x1, a_1)))
+        result.append((x2, f(x2, a_1)))
+        return result
 coeffs1 = "1 0 -4"
 coeffs2 = "1 -2 0"
 
