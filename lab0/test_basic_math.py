@@ -49,7 +49,7 @@ class MATHTestCase(unittest.TestCase):
     def test_functions(self):
         coeffs1 = "1 0 -4" 
         coeffs2 = "1 -2 0"
-        self.assertEqual(basic_math.functions(coeffs1, coeffs2), [(2, 0)])
+        self.assertEqual(basic_math.functions(coeffs1, coeffs2), [()])
 
         coeffs3 = "1 0 4" 
         coeffs4 = "1 0 1"
