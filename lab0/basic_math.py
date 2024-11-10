@@ -1,8 +1,8 @@
 import numpy as np
 import scipy as sc
 from scipy.optimize import minimize_scalar
-from scipy.stats import skew
-from scipy.stats import kurtosis
+from scipy.stats import skew as scipy_skew
+from scipy.stats import kurtosis as scipy_kurtosis
 
 
 def matrix_multiplication(matrix_a, matrix_b):
@@ -36,30 +36,35 @@ def functions(a_1, a_2):
     coeff1 = list(map(float, a_1.split()))
     coeff2 = list(map(float, a_2.split()))
     
-    func1 = lambda x: coeff1[0] * x**2 + coeff1[1] * x + coeff1[2]
-    func2 = lambda x: coeff2[0] * x**2 + coeff2[1] * x + coeff2[2]
+    if coeff1 == coeff2:
+        return None  
     
-    extremum1 = minimize_scalar(func1)
-    extremum2 = minimize_scalar(func2)
-    
-    if extremum1.success and extremum2.success:
-        x1, y1 = extremum1.x, func1(extremum1.x)
-        x2, y2 = extremum2.x, func2(extremum2.x)
-        
-        if np.isclose(x1, x2) and np.isclose(y1, y2):
-            return [(x1, y1)]  
-        elif np.isclose(y1, y2):
-            return None  
-        else:
-            return []  
-    return [] 
 
+    def find_extremum(coeff):
+        a, b, c = coeff
+        if a == 0:
+            return None  
+        x_ext = -b / (2 * a)
+        y_ext = a * x_ext**2 + b * x_ext + c
+        return (round(x_ext), round(y_ext))  
+    
+    extremum1 = find_extremum(coeff1)
+    extremum2 = find_extremum(coeff2)
+    
+    if extremum1 and extremum2 and extremum1 == extremum2:
+        return [extremum1]  
+    else:
+        return []
+coeffs1 = "1 0 -4"
+coeffs2 = "1 -2 0"
+
+print(functions(coeffs1, coeffs2))
 def skew(x):
     """
     Задание 3. Функция для расчета коэффициента асимметрии.
     Необходимо вернуть значение коэффициента асимметрии, округленное до 2 знаков после запятой.
     """
-    return round(skew(x), 2)
+    return round(scipy_skew(x), 2)
 
 
 
@@ -68,6 +73,6 @@ def kurtosis(x):
     Задание 3. Функция для расчета коэффициента эксцесса.
     Необходимо вернуть значение коэффициента эксцесса, округленное до 2 знаков после запятой.
     """
-    return round(kurtosis(x), 2)
+    return round(scipy_kurtosis(x), 2)
 
     
